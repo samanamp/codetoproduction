@@ -1,0 +1,16 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: oidc
+config:
+    client_secret: [ce6615c1-cf89-4fc0-9683-f65e692fd754]
+    client_id: [kong]
+    auth_methods: [introspection, password, client_credentials, authorization_code, bearer, kong_oauth2, refresh_token, session]
+    token_headers_names: [Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization, Access-Control-Allow-Origin]
+    introspect_jwt_tokens: true
+    issuer: "http://auth.workshop.nexjcloud.com/auth/realms/workshop"
+    introspection_endpoint: "http://auth.workshop.nexjcloud.com/auth/realms/workshop/protocol/openid-connect/token/introspect"
+    authorization_endpoint: "http://auth.workshop.nexjcloud.com/auth/realms/workshop/protocol/openid-connect/auth"
+    cache_introspection: false
+    redirect_uri: ["http://richard-douglas.workshop.nexjcloud.com"]
+plugin: openid-connect
