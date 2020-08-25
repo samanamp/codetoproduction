@@ -1,0 +1,108 @@
+keycloak:
+  replicas: 1
+
+  image:
+    repository: jboss/keycloak
+    tag: 10.0.2
+    pullSecrets: ["keycloak-docker"]
+
+  extraInitContainers: |
+    - name: theme-and-imports
+      image: nexjcloud/keycloak:latest
+      imagePullPolicy: Always
+      command:
+        - sh
+      args:
+        - -c
+        - |
+          echo "Copying theme..."
+          cp -R /opt/jboss/keycloak/themes/nexj/* /theme
+          echo "Copying imports..."
+          cp -R /opt/jboss/keycloak/imports/* /imports
+      volumeMounts:
+        - name: theme
+          mountPath: /theme
+        - name: imports
+          mountPath: /imports
+
+  extraVolumeMounts: |
+    - name: theme
+      mountPath: /opt/jboss/keycloak/themes/nexj
+    - name: imports
+      mountPath: /opt/jboss/keycloak/imports
+
+  extraVolumes: |
+    - name: theme
+      emptyDir: {}
+    - name: imports
+      emptyDir: {}
+  
+  service:
+    ## ServiceType
+    ## ref: https://kubernetes.io/docs/user-guide/services/#publishing-services---service-types
+    type: ClusterIP
+
+    httpPort: 80
+    httpNodePort: ""
+
+    httpsPort: 443
+    httpsNodePort: ""
+
+  ## Credentials for the initial Keycloak admin user
+  username: keycloaksa
+  password: nexj
+
+  ## Additional environment variables for Keycloak container
+  extraEnv: |
+    - name: PROXY_ADDRESS_FORWARDING
+      value: "true"
+    - name: KEYCLOAK_HTTPS_PORT
+      value: "443"
+    - name: KEYCLOAK_HTTP_PORT
+      value: "80"
+    - name: KEYCLOAK_HOSTNAME
+      value: "auth.gcp.nexjcloud.com"
+    - name: KEYCLOAK_DEFAULT_THEME
+      value: nexj
+    # - name: KEYCLOAK_LOGLEVEL
+    #   value: DEBUG
+    # - name: WILDFLY_LOGLEVEL
+    #   value: DEBUG
+    # - name: CACHE_OWNERS
+    #   value: "2"
+    # - name: DB_QUERY_TIMEOUT
+    #   value: "60"
+    # - name: DB_VALIDATE_ON_MATCH
+    #   value: true
+    # - name: DB_USE_CAST_FAIL
+    #   value: false
+
+  ## Ingress configuration
+  ingress:
+    enabled: true
+    path: /
+    
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      ingress.kubernetes.io/affinity: cookie
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/ingress.class: kong
+    
+    hosts:
+      - auth.workshop.nexjcloud.com
+
+    tls:
+    - hosts:
+      - auth.workshop.nexjcloud.com
+      secretName: auth-nudge-dev-ssl-cert
+
+  postgresql:
+    # If `true`, the Postgresql dependency is enabled
+    enabled: true
+    # PostgreSQL User to create
+    postgresqlUsername: keycloak
+    # PostgreSQL Password for the new user
+    postgresqlPassword: keycloak
+    # PostgreSQL Database to create
+    postgresqlDatabase: keycloak
+    # Persistent Volume Storage configuration

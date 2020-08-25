@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/affinity: cookie
+    kubernetes.io/ingress.class: kong
+    kubernetes.io/tls-acme: "true"
+  name: keycloak
+  namespace: keycloak
+  selfLink: /apis/extensions/v1beta1/namespaces/keycloak/ingresses/keycloak
+spec:
+  rules:
+  - host: auth.workshop.nexjcloud.com
+    http:
+      paths:
+      - backend:
+          serviceName: keycloak-http
+          servicePort: http
+        path: /
+  tls:
+  - hosts:
+    - auth.workshop.nexjcloud.com
+    secretName: auth-workshop-ssl-cert
