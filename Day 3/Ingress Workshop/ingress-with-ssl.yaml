@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: custom-nginx-ing
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+  - host: richard-douglas.workshop.nexjcloud.com
+    http:
+      paths:
+      - backend:
+          serviceName: custom-nginx-svc
+          servicePort: 80
+        path: /
+  tls:
+  - hosts:
+    - richard-douglas.workshop.nexjcloud.com
+    secretName: richard-douglas-nudge-ssl
