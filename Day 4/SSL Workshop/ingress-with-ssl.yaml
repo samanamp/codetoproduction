@@ -16,4 +16,4 @@ spec:
   tls:
   - hosts:
     - richard-douglas.workshop.nexjcloud.com
-    secretName: richard-douglas-nudge-ssl
+    secretName: custom-nginx-ssl-secret

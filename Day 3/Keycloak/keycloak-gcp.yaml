@@ -61,9 +61,7 @@ keycloak:
     - name: KEYCLOAK_HTTP_PORT
       value: "80"
     - name: KEYCLOAK_HOSTNAME
-      value: "auth.gcp.nexjcloud.com"
-    - name: KEYCLOAK_DEFAULT_THEME
-      value: nexj
+      value: "auth.workshop.nexjcloud.com"
     # - name: KEYCLOAK_LOGLEVEL
     #   value: DEBUG
     # - name: WILDFLY_LOGLEVEL
@@ -94,7 +92,7 @@ keycloak:
     tls:
     - hosts:
       - auth.workshop.nexjcloud.com
-      secretName: auth-nudge-dev-ssl-cert
+      secretName: auth-workshop-ssl-cert
 
   postgresql:
     # If `true`, the Postgresql dependency is enabled
